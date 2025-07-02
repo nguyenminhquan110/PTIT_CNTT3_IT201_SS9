@@ -1,86 +1,63 @@
-//
-// Created by Macbook Air on 2/7/25.
-//
 #include <stdio.h>
+#include <stdlib.h>
 
-// Hàm trộn hai mảng con đã được sắp xếp
-void merge(int arr[], int left, int mid, int right) {
-    int i, j, k;
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
+// Cấu trúc một nút
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
 
-    int L[n1], R[n2]; // Tạo mảng tạm
-
-    // Sao chép dữ liệu vào mảng tạm
-    for (i = 0; i < n1; i++)
-        L[i] = arr[left + i];
-    for (j = 0; j < n2; j++)
-        R[j] = arr[mid + 1 + j];
-
-    // Trộn mảng tạm lại vào arr[left..right]
-    i = 0; // chỉ số mảng L
-    j = 0; // chỉ số mảng R
-    k = left;
-
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            arr[k++] = L[i++];
-        } else {
-            arr[k++] = R[j++];
-        }
+// Tạo một nút mới
+Node* createNode(int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Lỗi cấp phát bộ nhớ.\n");
+        exit(1);
     }
-
-    // Sao chép các phần tử còn lại nếu có
-    while (i < n1)
-        arr[k++] = L[i++];
-    while (j < n2)
-        arr[k++] = R[j++];
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-// Hàm merge sort đệ quy
-void mergeSort(int arr[], int left, int right) {
-    if (left < right) {
-        int mid = (left + right) / 2;
-
-        // Đệ quy chia nhỏ
-        mergeSort(arr, left, mid);
-        mergeSort(arr, mid + 1, right);
-
-        // Gộp lại sau khi chia
-        merge(arr, left, mid, right);
+// In danh sách liên kết
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) printf("->");
+        current = current->next;
     }
+    printf("->NULL\n");
 }
 
-// Hàm in mảng
-void printArray(int arr[], int n) {
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
+// Xóa phần tử đầu tiên của danh sách
+Node* deleteHead(Node* head) {
+    if (head == NULL) return NULL; // Danh sách rỗng
+
+    Node* temp = head;       // Giữ node đầu để giải phóng
+    head = head->next;       // Cập nhật head mới
+    free(temp);              // Giải phóng node cũ
+
+    return head;
 }
 
+// Hàm main
 int main() {
-    int n;
+    // Tạo danh sách: 1->2->3->4->5
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
 
-    do {
-        printf("Nhap so luong phan tu (0 < n < 1000): ");
-        scanf("%d", &n);
-    } while (n <= 0 || n >= 1000);
+    // In danh sách ban đầu
+    printList(head);
 
-    int arr[n];
+    // Xóa phần tử đầu
+    head = deleteHead(head);
 
-    printf("Nhap %d phan tu:\n", n);
-    for (int i = 0; i < n; i++) {
-        printf("arr[%d] = ", i);
-        scanf("%d", &arr[i]);
-    }
-
-    printf("Mang truoc khi sap xep:\n");
-    printArray(arr, n);
-
-    mergeSort(arr, 0, n - 1);
-
-    printf("Mang sau khi sap xep (Merge Sort):\n");
-    printArray(arr, n);
+    // In danh sách sau khi xóa
+    printList(head);
 
     return 0;
 }

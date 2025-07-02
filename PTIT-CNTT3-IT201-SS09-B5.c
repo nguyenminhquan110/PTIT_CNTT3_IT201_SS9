@@ -1,72 +1,64 @@
-//
-// Created by Macbook Air on 2/7/25.
-//
 #include <stdio.h>
+#include <stdlib.h>
 
-// Hàm hoán đổi 2 giá trị
-void swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
+// Cấu trúc một nút
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
 
-// Hàm chia mảng và trả về chỉ số pivot
-int partition(int arr[], int low, int high) {
-    int pivot = arr[high]; // Chọn phần tử cuối làm pivot
-    int i = low - 1;        // Vị trí của phần tử nhỏ hơn pivot
-
-    for (int j = low; j < high; j++) {
-        if (arr[j] < pivot) {
-            i++;
-            swap(&arr[i], &arr[j]);
-        }
+// Tạo nút mới
+Node* createNode(int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Lỗi cấp phát bộ nhớ.\n");
+        exit(1);
     }
-
-    // Đặt pivot vào đúng vị trí
-    swap(&arr[i + 1], &arr[high]);
-    return i + 1;
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-// Hàm quick sort đệ quy
-void quickSort(int arr[], int low, int high) {
-    if (low < high) {
-        int pi = partition(arr, low, high); // Chia mảng
-
-        quickSort(arr, low, pi - 1);  // Sắp xếp mảng bên trái
-        quickSort(arr, pi + 1, high); // Sắp xếp mảng bên phải
+// In danh sách
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) printf("->");
+        current = current->next;
     }
+    printf("->NULL\n");
 }
 
-// Hàm in mảng
-void printArray(int arr[], int n) {
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
+// Thêm phần tử vào đầu danh sách
+Node* insertAtHead(Node* head, int value) {
+    Node* newNode = createNode(value);
+    newNode->next = head;
+    return newNode; // newNode trở thành head mới
 }
 
+// Hàm main
 int main() {
-    int n;
-    do {
-        printf("Nhap so luong phan tu (0 < n < 1000): ");
-        scanf("%d", &n);
-    } while (n <= 0 || n >= 1000);
+    // Tạo danh sách 1->2->3->4->5
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
 
-    int arr[n];
+    // In danh sách ban đầu
+    printList(head);
 
-    printf("Nhap %d phan tu:\n", n);
-    for (int i = 0; i < n; i++) {
-        printf("arr[%d] = ", i);
-        scanf("%d", &arr[i]);
-    }
+    // Nhập giá trị cần thêm
+    int x;
+    printf("Nhập số cần thêm vào đầu danh sách: ");
+    scanf("%d", &x);
 
-    printf("Mang truoc khi sap xep:\n");
-    printArray(arr, n);
+    // Thêm vào đầu danh sách
+    head = insertAtHead(head, x);
 
-    // Gọi hàm quick sort
-    quickSort(arr, 0, n - 1);
-
-    printf("Mang sau khi sap xep (Quick Sort):\n");
-    printArray(arr, n);
+    // In danh sách sau khi thêm
+    printList(head);
 
     return 0;
 }

@@ -1,56 +1,70 @@
-//
-// Created by Macbook Air on 2/7/25.
-//
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-// Hàm sắp xếp chèn (Insertion Sort)
-void insertionSort(int arr[], int n) {
-    for (int i = 1; i < n; i++) {
-        int key = arr[i];   // Phần tử cần chèn
-        int j = i - 1;
+// Cấu trúc một nút
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
 
-        // Dời các phần tử lớn hơn key sang phải
-        while (j >= 0 && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j--;
-        }
-
-        // Chèn key vào đúng vị trí
-        arr[j + 1] = key;
+// Tạo nút mới
+Node* createNode(int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Lỗi cấp phát bộ nhớ.\n");
+        exit(1);
     }
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-// Hàm in mảng
-void printArray(int arr[], int n) {
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
+// In danh sách theo dạng 1->2->3->...->NULL
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) printf("->");
+        current = current->next;
+    }
+    printf("->NULL\n");
 }
 
+// Tìm kiếm giá trị trong danh sách, trả về true/false
+bool search(Node* head, int target) {
+    Node* current = head;
+    while (current != NULL) {
+        if (current->data == target)
+            return true;
+        current = current->next;
+    }
+    return false;
+}
+
+// Hàm main
 int main() {
-    int n;
+    // Tạo danh sách liên kết 1->2->3->4->5
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
 
-    do {
-        printf("Nhap so luong phan tu (0 < n < 1000): ");
-        scanf("%d", &n);
-    } while (n <= 0 || n >= 1000);
+    // In danh sách
+    printList(head);
 
-    int arr[n];
+    // Nhập giá trị cần tìm
+    int x;
+    printf("Nhập số cần tìm: ");
+    scanf("%d", &x);
 
-    printf("Nhap %d phan tu:\n", n);
-    for (int i = 0; i < n; i++) {
-        printf("arr[%d] = ", i);
-        scanf("%d", &arr[i]);
+    // Tìm kiếm và in kết quả
+    if (search(head, x)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
     }
-
-    printf("Mang truoc khi sap xep:\n");
-    printArray(arr, n);
-
-    // Gọi hàm sắp xếp chèn
-    insertionSort(arr, n);
-
-    printf("Mang sau khi sap xep (Insertion Sort):\n");
-    printArray(arr, n);
 
     return 0;
 }
